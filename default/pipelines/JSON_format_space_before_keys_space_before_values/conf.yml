@@ -1,0 +1,46 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        Assign the log field to _raw
+        Preserve the docker processed time as microservices_time
+        Preserve the stream field (stderr, stdout)
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: _raw
+      iterations: 100
+      overwrite: false
+      regex: /"(log|line|msg|message)":\s*"(?<_raw>([\s\S]*?))(","|"}$)/gm
+      regexList:
+        - regex: /"(?<_NAME_0>[^"]+)":\s*"(?<_VALUE_0>[^"]+(?<!",|"}))/g
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        Slice the 2nd line to last line, create ONE field joined with a new
+        line, 
+
+        rather than keeping the lines as part of an array. This will allow us to have ONE pipeline to process these logs regardless if they originated from containers or not.
+
+
+        What happens if we don't do join and want the first to third lines?
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: _raw
+          value: _raw.slice(1).join('\n')
+      remove:
+        - log
+        - line
+        - message
+        - msg

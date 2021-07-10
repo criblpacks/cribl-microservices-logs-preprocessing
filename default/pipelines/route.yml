@@ -1,0 +1,48 @@
+id: default
+groups: {}
+routes:
+  - id: ekS3rc
+    name: JSON_single_line
+    final: true
+    disabled: false
+    pipeline: JSON_single_line_events
+    description: JSON single line events
+    clones: []
+    filter: _raw.match(`"(log|msg|line|message)":`) && !_raw.match(`\n.*\n`)
+    output: default
+  - id: vzMQ1u
+    name: JSON_multi_line
+    final: true
+    disabled: false
+    pipeline: JSON_Multiline_via_Regex-Extract
+    description: JSON multi line events
+    clones: []
+    filter: _raw.match(`"(log|msg|line|message)":`) && _raw.match(`\n.*\n`)
+    output: default
+  - id: eZMmLb
+    name: CRIO_Containerd_Prefixed_WITH_F-P_indicator
+    final: true
+    disabled: false
+    pipeline: CRI_Universal
+    description: CRIO Logging Standard
+    clones: []
+    filter: _raw.match(`\s+\w+\s+[PF]\s+`)
+    output: default
+  - id: 0O9mg8
+    name: PivotalCloudFoundry-PCF
+    final: true
+    disabled: false
+    pipeline: PCF_Universal
+    description: Pivotal Cloud Foundry Events
+    clones: []
+    filter: _raw.match(`"cf_`) || container_engine=='pcf'
+    output: default
+  - id: default
+    name: default
+    final: true
+    disabled: true
+    pipeline: main
+    description: ""
+    clones: []
+    filter: "true"
+    output: default

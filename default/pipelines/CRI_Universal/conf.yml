@@ -1,0 +1,20 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: mask
+    filter: "true"
+    disabled: null
+    conf:
+      rules:
+        - matchRegex: /.*\s+std\S+\s+[PF]\s+(?<_raw>[^\n]+)/gm
+          replaceExpr: "`${g1}`"
+      fields:
+        - _raw
+      flags:
+        - name: multiline
+          value: "_raw.match('\\n.*\\n') ? true : false"
+    description: Replace _raw with the string after (stdout|stderror) followed by the F or
+      P characters.
+description: CRI formatted logs. The new format with CRIO, Containerd, newer K8s engines,
+  and Openshift 4.5+

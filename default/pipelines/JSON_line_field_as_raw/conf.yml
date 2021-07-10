@@ -1,0 +1,49 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        Assign the log field to _raw
+        Preserve the docker processed time as microservices_time
+        Preserve the stream field (stderr, stdout)
+  - id: serde
+    filter: "true"
+    disabled: null
+    conf:
+      mode: extract
+      type: json
+      srcField: _raw
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        Slice the 2nd line to last line, create ONE field joined with a new
+        line, 
+
+        rather than keeping the lines as part of an array. This will allow us to have ONE pipeline to process these logs regardless if they originated from containers or not.
+
+
+        What happens if we don't do join and want the first to third lines?
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: _raw
+          value: "line.length > 0 ? line : _raw"
+        - name: _raw
+          value: "msg.length > 0 ? msg : _raw"
+        - name: _raw
+          value: "log.length > 0 ? log : _raw"
+        - value: "message.length > 0 ? message : _raw"
+          name: _raw
+      remove:
+        - line
+        - message
+        - msg
+        - log

@@ -1,0 +1,51 @@
+output: default
+groups: {}
+asyncFuncTimeout: 1000
+functions:
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: A universal pipeline that uses regex extract to process all fields.
+        Originally used this method to accommodate multi-line logs. Use other
+        more specific pipelines for single line logs first before resorting to
+        this pipeline
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: |-
+        Step 3: Assign the log, msg, line, or message field to _raw
+        Preserve all json fields through regex
+  - id: regex_extract
+    filter: "true"
+    disabled: false
+    conf:
+      source: _raw
+      iterations: 100
+      overwrite: false
+      regex: /"(log|line|msg|message)":\s*"(?<_raw>([\s\S]*?))(","|"}$)/gm
+      regexList:
+        - regex: /"(?<_NAME_0>[^"]+)":\s*"(?<_VALUE_0>[^"]+(?<!",|"}))/g
+  - id: comment
+    filter: "true"
+    disabled: null
+    conf:
+      comment: >-
+        Step 5: Slice the 2nd line to last line, create ONE field joined with a
+        new line, 
+
+        rather than keeping the lines as part of an array. This will make the log look like it came from a non-microservices environment. You can then run these logs through a pipeline specific to those logs (e.g. Process the log4j pack against java application logs, apache access logs pack for access-combined logs, etc.)
+  - id: eval
+    filter: "true"
+    disabled: false
+    conf:
+      add:
+        - name: _raw
+          value: _raw.slice(1).join('\n')
+      remove:
+        - log
+        - line
+        - message
+        - msg
+description: Universal attempt to process all Microservices JSON events.

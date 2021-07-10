@@ -1,0 +1,31 @@
+tN4wbL:
+  sampleName: PCF.log
+  created: 1624664750379
+  size: 72189
+  numEvents: 63
+PIhinL:
+  sampleName: docker_linefield_post-processed.log
+  created: 1624664836718
+  size: 7380
+  numEvents: 25
+  modified: 1624664836720.111
+s3BHlt:
+  sampleName: openshift-multiline.log
+  created: 1624665177332
+  size: 8837
+  numEvents: 7
+zZUMez:
+  sampleName: Crio-multiline.log
+  created: 1624667765118
+  size: 3191
+  numEvents: 4
+OR2y5U:
+  sampleName: k8s-multiplesourcetypes.log
+  created: 1624840718040
+  size: 264057
+  numEvents: 364
+Hrfwea:
+  sampleName: docker_json_linefield_asraw.log
+  created: 1624842090795
+  size: 8397
+  numEvents: 22
